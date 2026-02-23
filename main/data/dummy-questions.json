@@ -1,0 +1,69 @@
+[
+  {
+    "id": 1,
+    "text": "Saya lebih suka bekerja dalam tim daripada sendiri.",
+    "type": "single",
+    "options": [
+      "Saat ada konflik, saya jujur dan mengedepankan logika",
+      "Saat ada konflik, saya menjaga hubungan yang harmonis"
+    ],
+    "required": true,
+    "meta": { "category": "sosial", "weight": 1 }
+  },
+  {
+    "id": 2,
+    "text": "Saya merasa nyaman berbicara di depan umum.",
+    "type": "single",
+    "options": ["Setuju", "Tidak Setuju"],
+    "required": true,
+    "meta": { "category": "kepercayaan-diri", "weight": 1 }
+  },
+  {
+    "id": 3,
+    "text": "Saya menyelesaikan tugas tepat waktu.",
+    "type": "single",
+    "options": ["Sering", "Jarang"],
+    "required": true,
+    "meta": { "category": "disiplin", "weight": 1 }
+  },
+  {
+    "id": 4,
+    "text": "Saya suka mencoba hal baru.",
+    "type": "single",
+    "options": ["Iya", "Tidak"],
+    "required": true,
+    "meta": { "category": "keterbukaan", "weight": 1 }
+  },
+  {
+    "id": 5,
+    "text": "Saya merasa tenang saat menghadapi tekanan.",
+    "type": "single",
+    "options": ["Benar", "Salah"],
+    "required": true,
+    "meta": { "category": "stabilitas-emosional", "weight": 1 }
+  },
+  {
+    "id": 6,
+    "text": "Saya merasa tenang saat menghadapi tekanan.",
+    "type": "single",
+    "options": ["Benar", "Salah"],
+    "required": true,
+    "meta": { "category": "stabilitas-emosional", "weight": 1 }
+  },
+  {
+    "id": 7,
+    "text": "Saya merasa tenang saat menghadapi tekanan.",
+    "type": "single",
+    "options": ["Benar", "Salah"],
+    "required": true,
+    "meta": { "category": "stabilitas-emosional", "weight": 1 }
+  },
+  {
+    "id": 8,
+    "text": "Saya merasa tenang saat menghadapi tekanan.",
+    "type": "single",
+    "options": ["Benar", "Salah"],
+    "required": true,
+    "meta": { "category": "stabilitas-emosional", "weight": 1 }
+  }
+]

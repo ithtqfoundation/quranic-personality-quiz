@@ -1,0 +1,336 @@
+{
+  "info": {
+    "name": "HTQ Backend API V2",
+    "_postman_id": "htq-backend-v2-collection",
+    "description": "Postman collection for HTQ Personality Quiz backend with new 4-layer quiz system (Extraversion, Ego+Neuro, Branch, Tie-breaker). Updated: Passwordless registration, no anonymous flow.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "2.1.0"
+  },
+  "item": [
+    {
+      "name": "Auth - Google Login (STEP 1 - RECOMMENDED)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { 
+          "raw": "{{baseUrl}}/api/auth/google-login", 
+          "host": ["{{baseUrl}}"], 
+          "path": ["api","auth","google-login"] 
+        },
+        "description": "🔥 NEW FLOW (Google OAuth):\n\nSTEP 1: Initiate Google OAuth Login\n- Open this URL in browser (not Postman)\n- User will be redirected to Google consent screen\n- After authorization, Google redirects to /api/auth/callback\n- Callback checks if profile complete:\n  - If INCOMPLETE → redirect to /complete-profile page\n  - If COMPLETE → redirect to /dashboard\n\nNOTE: This must be opened in a real browser, not Postman, because it requires Google OAuth redirect flow.\n\nAfter successful login, proceed to 'Auth - Complete Profile' endpoint."
+      },
+      "response": []
+    },
+    {
+      "name": "Auth - Complete Profile (STEP 2 - REQUIRED)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "name", "value": "John Doe", "type": "text", "description": "Nama Lengkap (REQUIRED)" },
+            { "key": "gender", "value": "male", "type": "text", "description": "Gender: male/female/other (REQUIRED)" },
+            { "key": "date_of_birth", "value": "1995-06-15", "type": "text", "description": "Format: YYYY-MM-DD (REQUIRED, min age 13)" },
+            { "key": "file", "type": "file", "description": "Profile photo (JPEG/PNG/WebP, max 5MB) - OPTIONAL" }
+          ]
+        },
+        "url": { 
+          "raw": "{{baseUrl}}/api/auth/complete-profile", 
+          "host": ["{{baseUrl}}"], 
+          "path": ["api","auth","complete-profile"] 
+        },
+        "description": "🔥 NEW FLOW (Google OAuth):\n\nSTEP 2: Complete Profile After Google Login\n\nRequired fields:\n- name: Nama Lengkap\n- gender: male/female/other\n- date_of_birth: YYYY-MM-DD (must be 13+ years old)\n\nOptional:\n- file: Profile photo (max 5MB, JPEG/PNG/WebP)\n\nBackend flow:\n1. Verify user authenticated via Google OAuth\n2. Upload photo to Supabase Storage (if provided)\n3. Upsert user profile with complete data\n4. Return user object with photo_url\n\nResponse (200):\n{\n  \"message\": \"Profile completed successfully\",\n  \"user\": {\n    \"id\": \"uuid\",\n    \"email\": \"john@gmail.com\",\n    \"name\": \"John Doe\",\n    \"gender\": \"male\",\n    \"date_of_birth\": \"1995-06-15\",\n    \"photo_url\": \"https://...\"\n  }\n}\n\nNOTE: User must be authenticated (have valid session cookie from Google OAuth) before calling this endpoint."
+      },
+      "response": []
+    },
+    {
+      "name": "Auth - Check Profile Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { 
+          "raw": "{{baseUrl}}/api/auth/complete-profile", 
+          "host": ["{{baseUrl}}"], 
+          "path": ["api","auth","complete-profile"] 
+        },
+        "description": "Check if user's profile is complete after Google OAuth login.\n\nResponse (profile incomplete):\n{\n  \"profile_completed\": false,\n  \"user\": {\n    \"id\": \"uuid\",\n    \"email\": \"user@gmail.com\",\n    \"name\": null,\n    \"gender\": null,\n    \"date_of_birth\": null,\n    \"photo_url\": null\n  }\n}\n\nResponse (profile complete):\n{\n  \"profile_completed\": true,\n  \"user\": {\n    \"id\": \"uuid\",\n    \"email\": \"user@gmail.com\",\n    \"name\": \"John Doe\",\n    \"gender\": \"male\",\n    \"date_of_birth\": \"1995-06-15\",\n    \"photo_url\": \"https://...\"\n  }\n}\n\nUse this to decide whether to show /complete-profile form or redirect to /dashboard."
+      },
+      "response": []
+    },
+    {
+      "name": "Auth - Register (DEPRECATED - use Google OAuth)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"testuser123@gmail.com\",\n  \"name\": \"Nama Pengguna\",\n  \"date_of_birth\": \"1990-01-15\",\n  \"photo_url\": \"https://example.com/photo.jpg\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] },
+        "description": "⚠️ DEPRECATED: Use Google OAuth flow instead.\n\nOLD: Register without file upload. For new implementation, use:\n1. GET /api/auth/google-login (in browser)\n2. POST /api/auth/complete-profile (with form data)"
+      },
+      "response": []
+    },
+    {
+      "name": "Auth - Register with Photo Upload (DEPRECATED)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "email", "value": "testuser456@gmail.com", "type": "text", "description": "Valid email address" },
+            { "key": "name", "value": "Nama Pengguna", "type": "text", "description": "User's full name" },
+            { "key": "date_of_birth", "value": "1990-01-15", "type": "text", "description": "Format: YYYY-MM-DD" },
+            { "key": "file", "type": "file", "description": "Profile photo (JPEG/PNG/WebP, max 5MB) - OPTIONAL" }
+          ]
+        },
+        "url": { "raw": "{{baseUrl}}/api/auth/register-with-photo", "host": ["{{baseUrl}}"], "path": ["api","auth","register-with-photo"] },
+        "description": "⚠️ DEPRECATED: Use Google OAuth flow instead.\n\nOLD: Sequential registration flow with email/password. New flow uses Google OAuth + complete-profile."
+      },
+      "response": []
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"testuser123@gmail.com\",\n  \"password\": \"P@ssw0rd!\"\n}" },
+        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+        "description": "NOTE: Regular users don't need this endpoint (they auto-login after register). This is for:\n- Testing/development purposes\n- Admin access with known passwords\n- Session refresh if user session expires\n\nUsers don't know their password (auto-generated during register)."
+      }
+    },
+    {
+      "name": "Auth - Logout",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{bearerToken}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api","auth","logout"] },
+        "description": "NOTE: Optional endpoint. Clears session token. In most cases, frontend can just remove the bearerToken locally without calling this API."
+      }
+    },
+    {
+      "name": "User - Get Profile",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{bearerToken}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/user/profile", "host": ["{{baseUrl}}"], "path": ["api","user","profile"] },
+        "description": "Get authenticated user's profile data. Requires valid bearerToken from register response."
+      }
+    },
+    {
+      "name": "User - Update Profile",
+      "request": {
+        "method": "PATCH",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{bearerToken}}" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Nama Baru\",\n  \"bio\": \"Bio singkat\"\n}" },
+        "url": { "raw": "{{baseUrl}}/api/user/profile", "host": ["{{baseUrl}}"], "path": ["api","user","profile"] },
+        "description": "NOTE: Optional for quiz flow. Update user profile (name, bio, etc). Not required for taking the quiz."
+      }
+    },
+    {
+      "name": "User - Upload Photo (example)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{bearerToken}}" } ],
+        "body": { "mode": "formdata", "formdata": [ { "key": "file", "type": "file", "description": "Select image file" } ] },
+        "url": { "raw": "{{baseUrl}}/api/user/upload-photo", "host": ["{{baseUrl}}"], "path": ["api","user","upload-photo"] },
+        "description": "NOTE: Optional for quiz flow. Upload profile photo. Can be done during register via photo_url field instead. This endpoint requires multipart form-data file upload."
+      }
+    },
+    {
+      "name": "Quiz - Layer 1: Get Extraversion Questions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { 
+          "raw": "{{baseUrl}}/api/quiz/questions?layer=1", 
+          "host": ["{{baseUrl}}"], 
+          "path": ["api","quiz","questions"], 
+          "query": [ { "key": "layer", "value": "1", "description": "Layer 1: Extraversion (11 questions)" } ] 
+        },
+        "description": "REQUIRED for quiz flow. Fetch Layer 1 questions (Extraversion). Can be called without authentication."
+      }
+    },
+    {
+      "name": "Quiz - Layer 2: Get Ego+Neuro Questions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { 
+          "raw": "{{baseUrl}}/api/quiz/questions?layer=2", 
+          "host": ["{{baseUrl}}"], 
+          "path": ["api","quiz","questions"], 
+          "query": [ { "key": "layer", "value": "2", "description": "Layer 2: Ego (5Q) + Neuroticism (5Q)" } ] 
+        },
+        "description": "REQUIRED for quiz flow. Fetch Layer 2 questions (EGO + Neuroticism). Can be called without authentication."
+      }
+    },
+    {
+      "name": "Quiz - Layer 3: Get Questions (EHNH)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { 
+          "raw": "{{baseUrl}}/api/quiz/questions?layer=3&branch=EHNH", 
+          "host": ["{{baseUrl}}"], 
+          "path": ["api","quiz","questions"], 
+          "query": [ 
+            { "key": "layer", "value": "3", "description": "Layer 3: Branch questions" },
+            { "key": "branch", "value": "EHNH", "description": "Ego High + Neuro High" }
+          ] 
+        },
+        "description": "REQUIRED for quiz flow. Fetch Layer 3 questions for EHNH branch (Ego High, Neuroticism High). Returns 5 questions. Branch parameter is REQUIRED - determined from Layer 2 results."
+      }
+    },
+    {
+      "name": "Quiz - Layer 3: Get Questions (EHNL)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { 
+          "raw": "{{baseUrl}}/api/quiz/questions?layer=3&branch=EHNL", 
+          "host": ["{{baseUrl}}"], 
+          "path": ["api","quiz","questions"], 
+          "query": [ 
+            { "key": "layer", "value": "3", "description": "Layer 3: Branch questions" },
+            { "key": "branch", "value": "EHNL", "description": "Ego High + Neuro Low" }
+          ] 
+        },
+        "description": "REQUIRED for quiz flow. Fetch Layer 3 questions for EHNL branch (Ego High, Neuroticism Low). Returns 5 questions. Branch parameter is REQUIRED - determined from Layer 2 results."
+      }
+    },
+    {
+      "name": "Quiz - Layer 3: Get Questions (ELNH)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { 
+          "raw": "{{baseUrl}}/api/quiz/questions?layer=3&branch=ELNH", 
+          "host": ["{{baseUrl}}"], 
+          "path": ["api","quiz","questions"], 
+          "query": [ 
+            { "key": "layer", "value": "3", "description": "Layer 3: Branch questions" },
+            { "key": "branch", "value": "ELNH", "description": "Ego Low + Neuro High" }
+          ] 
+        },
+        "description": "REQUIRED for quiz flow. Fetch Layer 3 questions for ELNH branch (Ego Low, Neuroticism High). Returns 5 questions. Branch parameter is REQUIRED - determined from Layer 2 results."
+      }
+    },
+    {
+      "name": "Quiz - Layer 3: Get Questions (ELNL)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { 
+          "raw": "{{baseUrl}}/api/quiz/questions?layer=3&branch=ELNL", 
+          "host": ["{{baseUrl}}"], 
+          "path": ["api","quiz","questions"], 
+          "query": [ 
+            { "key": "layer", "value": "3", "description": "Layer 3: Branch questions" },
+            { "key": "branch", "value": "ELNL", "description": "Ego Low + Neuro Low" }
+          ] 
+        },
+        "description": "REQUIRED for quiz flow. Fetch Layer 3 questions for ELNL branch (Ego Low, Neuroticism Low). Returns 5 questions. Branch parameter is REQUIRED - determined from Layer 2 results."
+      }
+    },
+    {
+      "name": "Quiz - Get Tie-Breaker Question",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { 
+          "raw": "{{baseUrl}}/api/quiz/tie-breaker?juzA=12&juzB=14", 
+          "host": ["{{baseUrl}}"], 
+          "path": ["api","quiz","tie-breaker"], 
+          "query": [ 
+            { "key": "juzA", "value": "12", "description": "First Juz number" },
+            { "key": "juzB", "value": "14", "description": "Second Juz number" }
+          ] 
+        },
+        "description": "CONDITIONAL: Only needed if Layer 3 submission returns had_tie=true. Get tie-breaker question for specific Juz pair."
+      }
+    },
+    {
+      "name": "Quiz - Submit Layer 1 (Extraversion)",
+      "request": {
+        "method": "POST",
+        "header": [ 
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+        ],
+        "body": { 
+          "mode": "raw", 
+          "raw": "{\n  \"layer\": 1,\n  \"answers\": [\n    {\"question_id\": 1, \"option_id\": 1},\n    {\"question_id\": 2, \"option_id\": 3}\n  ]\n}" 
+        },
+        "url": { "raw": "{{baseUrl}}/api/quiz/submit", "host": ["{{baseUrl}}"], "path": ["api","quiz","submit"] },
+        "description": "Submit Layer 1 answers. User must be authenticated (registered). Returns result_id for next layers."
+      }
+    },
+    {
+      "name": "Quiz - Submit Layer 2 (determines branch)",
+      "request": {
+        "method": "POST",
+        "header": [ 
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+        ],
+        "body": { 
+          "mode": "raw", 
+          "raw": "{\n  \"layer\": 2,\n  \"answers\": [\n    {\"question_id\": 12, \"option_id\": 23},\n    {\"question_id\": 13, \"option_id\": 25}\n  ],\n  \"resultId\": \"{{resultId}}\"\n}" 
+        },
+        "url": { "raw": "{{baseUrl}}/api/quiz/submit", "host": ["{{baseUrl}}"], "path": ["api","quiz","submit"] },
+        "description": "Submit Layer 2 (EGO + Neuroticism) to determine branch category."
+      }
+    },
+    {
+      "name": "Quiz - Submit Layer 3 (Juz scoring)",
+      "request": {
+        "method": "POST",
+        "header": [ 
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+        ],
+        "body": { 
+          "mode": "raw", 
+          "raw": "{\n  \"layer\": 3,\n  \"answers\": [\n    {\"question_id\": 22, \"option_id\": 43},\n    {\"question_id\": 23, \"option_id\": 45}\n  ],\n  \"resultId\": \"{{resultId}}\"\n}" 
+        },
+        "url": { "raw": "{{baseUrl}}/api/quiz/submit", "host": ["{{baseUrl}}"], "path": ["api","quiz","submit"] },
+        "description": "Submit Layer 3 to calculate Juz scores. May trigger tie-breaker if top 2 Juz have same score."
+      }
+    },
+    {
+      "name": "Quiz - Submit Layer 4 (tie-breaker)",
+      "request": {
+        "method": "POST",
+        "header": [ 
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+        ],
+        "body": { 
+          "mode": "raw", 
+          "raw": "{\n  \"layer\": 4,\n  \"answers\": [],\n  \"resultId\": \"{{resultId}}\",\n  \"tiebreakerAnswer\": \"A\"\n}" 
+        },
+        "url": { "raw": "{{baseUrl}}/api/quiz/submit", "host": ["{{baseUrl}}"], "path": ["api","quiz","submit"] },
+        "description": "Submit tie-breaker answer (A or B) to resolve Juz tie."
+      }
+    },
+    {
+      "name": "Quiz - Get Results (by result id)",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{bearerToken}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/quiz/results?resultId={{resultId}}", "host": ["{{baseUrl}}"], "path": ["api","quiz","results"], "query": [ { "key": "resultId", "value": "{{resultId}}" } ] },
+        "description": "Get quiz results by result ID. User must be authenticated and own the result."
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "bearerToken", "value": "", "description": "Access token from register/login response. Set this after successful authentication." },
+    { "key": "resultId", "value": "", "description": "Quiz result ID from Layer 1 submission. Used for Layer 2, 3, 4." }
+  ]
+}
