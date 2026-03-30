@@ -33,7 +33,7 @@ export default function Hero() {
         </m.span>
 
         <m.h1 variants={heroTitle} className="mt-6 text-[1.75rem] md:text-5xl max-w-xl mx-auto leading-tight font-cormorant font-bold">
-          Kenali Kepribadian Qur’ani yang Membentuk Dirimu
+          Kenali Kepribadian Qur’ani-mu berdasarkan 30 Juz Al-Qur'an
         </m.h1>
 
         <m.p variants={heroSubtitle} className="font-plus-jakarta mt-2 max-w-2xl mx-auto text-sm md:text-lg text-[var(--foreground)]">
