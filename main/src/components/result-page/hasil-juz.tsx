@@ -72,8 +72,20 @@ const FALLBACK_CARDS: ResultPageCard[] = [
 ];
 
 // ── Main export ───────────────────────────────────────────────────────────────
+interface PersonalityData {
+  name?: string;
+  tagline?: string;
+  description?: string;
+  strengths?: string[];
+  challenges?: string[];
+}
+
+interface QuizResult {
+  personality?: PersonalityData;
+}
+
 interface HasilJuzProps {
-  result?: any;
+  result?: QuizResult;
   cards: ResultPageCard[];
 }
 
@@ -97,8 +109,9 @@ export default function HasilJuz({ result, cards }: HasilJuzProps) {
     }
 
     if (card.card_type === 'personality_strengths') {
-      const nextCard = activeCards[idx + 1];
-      const nextIsChallenge = nextCard?.card_type === 'personality_challenges' && nextCard.is_active;
+      // Skip inactive cards to find the next active neighbour
+      const nextActiveCard = activeCards.slice(idx + 1).find((c) => c.is_active);
+      const nextIsChallenge = nextActiveCard?.card_type === 'personality_challenges';
       if (nextIsChallenge) {
         return (
           <div key={card.id} className="flex lg:flex-row flex-col items-stretch justify-center gap-[25px]">
@@ -115,8 +128,9 @@ export default function HasilJuz({ result, cards }: HasilJuzProps) {
     }
 
     if (card.card_type === 'personality_challenges') {
-      const prevCard = activeCards[idx - 1];
-      if (prevCard?.card_type === 'personality_strengths' && prevCard.is_active) return null;
+      // Skip inactive cards to find the previous active neighbour
+      const prevActiveCard = [...activeCards].slice(0, idx).reverse().find((c) => c.is_active);
+      if (prevActiveCard?.card_type === 'personality_strengths') return null;
       return (
         <div key={card.id} className="flex lg:flex-row flex-col items-stretch justify-center gap-[25px]">
           <PersonalityChallenges challenges={challenges} />

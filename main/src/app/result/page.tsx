@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import type { ResultPageCard } from '@/types/result-page';
+
 export default function Result() {
   const [result, setResult] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
@@ -132,9 +133,15 @@ export default function Result() {
 
   useEffect(() => {
     fetch('/api/result-page/cards')
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`cards fetch failed: ${r.status}`);
+        return r.json();
+      })
       .then((data) => setResultCards(data.cards || []))
-      .catch(() => setResultCards([]));
+      .catch((err) => {
+        console.warn('[result/page] Failed to load result cards, using fallback', err);
+        setResultCards([]);
+      });
   }, []);
 
   return (
