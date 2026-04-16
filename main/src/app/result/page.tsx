@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import type { ResultPageCard } from '@/types/result-page';
+import { RESULT_PAGE_API_ROUTES } from '@/lib/constants';
 
 export default function Result() {
   const [result, setResult] = useState<any | null>(null);
@@ -132,7 +133,7 @@ export default function Result() {
   }, []);
 
   useEffect(() => {
-    fetch('/api/result-page/cards')
+    fetch(RESULT_PAGE_API_ROUTES.CARDS)
       .then((r) => {
         if (!r.ok) throw new Error(`cards fetch failed: ${r.status}`);
         return r.json();

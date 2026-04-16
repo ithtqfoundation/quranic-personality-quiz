@@ -175,10 +175,15 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'id is required' }, { status: 400 });
     }
 
+    const numericId = parseInt(id, 10);
+    if (isNaN(numericId)) {
+      return NextResponse.json({ error: 'id must be a valid number' }, { status: 400 });
+    }
+
     const { error } = await supabase
       .from('result_page_cards')
       .delete()
-      .eq('id', parseInt(id));
+      .eq('id', numericId);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

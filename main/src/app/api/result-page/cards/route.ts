@@ -1,12 +1,12 @@
 // Public API Route: Result Page Cards (no auth required)
-import { createAdminClient } from '@/lib/supabase/admin';
+import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
 // GET — public, tanpa auth
 // Mengembalikan active cards + blocks diurutkan by order_number
 export async function GET() {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
 
     const { data: cards, error: cardsError } = await supabase
       .from('result_page_cards')
