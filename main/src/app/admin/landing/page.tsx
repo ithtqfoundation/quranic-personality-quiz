@@ -4,8 +4,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { ImageUploader } from '@/components/admin/ImageUploader';
 import { Save, Trash2, Plus, GripVertical } from 'lucide-react';
 import { toast } from 'sonner';
+import { HasilJuzTab } from '@/components/admin/HasilJuzTab';
 
-type Tab = 'hero' | 'manfaat' | 'hasil' | 'cta' | 'footer';
+type Tab = 'hero' | 'manfaat' | 'hasil' | 'cta' | 'footer' | 'hasil_juz';
 
 const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: 'hero', label: 'Hero', icon: '🎯' },
@@ -13,6 +14,7 @@ const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: 'hasil', label: 'Hasil', icon: '📊' },
   { key: 'cta', label: 'CTA', icon: '📢' },
   { key: 'footer', label: 'Footer', icon: '📋' },
+  { key: 'hasil_juz', label: 'Hasil Juz', icon: '📜' },
 ];
 
 // ============================================
@@ -299,12 +301,18 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Save Button */}
+        {tab === 'hasil_juz' && (
+          <HasilJuzTab />
+        )}
+
+        {/* Save Button — tidak tampil untuk hasil_juz karena punya save sendiri */}
+        {tab !== 'hasil_juz' && (
         <div className="flex justify-end mt-6 pt-4 border-t border-white/10">
           <button onClick={() => saveSection(tab)} disabled={saving} className="flex items-center gap-2 px-6 py-2.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 rounded-lg text-sm font-medium hover:bg-emerald-500/30 disabled:opacity-50 transition-colors">
             <Save size={16} /> {saving ? 'Saving...' : `Save ${TABS.find(t => t.key === tab)?.label}`}
           </button>
         </div>
+        )}
       </div>
     </div>
   );
