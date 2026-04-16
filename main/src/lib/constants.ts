@@ -41,6 +41,10 @@ export const ADMIN_API_ROUTES = {
   LANDING_UPLOAD: '/api/admin/landing/upload',
 } as const;
 
+export const RESULT_PAGE_API_ROUTES = {
+  CARDS: '/api/result-page/cards',
+} as const;
+
 // ============================================
 // QUIZ CONFIGURATION
 // ============================================

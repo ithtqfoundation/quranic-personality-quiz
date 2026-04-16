@@ -327,6 +327,57 @@ export interface Database {
           updated_at?: string;
         };
       };
+      result_page_cards: {
+        Row: {
+          id: number;
+          title: string;
+          card_type: string;
+          order_number: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          title: string;
+          card_type?: string;
+          order_number?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          title?: string;
+          card_type?: string;
+          order_number?: number;
+          is_active?: boolean;
+          updated_at?: string;
+        };
+      };
+      result_page_card_blocks: {
+        Row: {
+          id: number;
+          card_id: number;
+          block_type: string;
+          content: string;
+          order_number: number;
+        };
+        Insert: {
+          id?: number;
+          card_id: number;
+          block_type: string;
+          content?: string;
+          order_number?: number;
+        };
+        Update: {
+          id?: number;
+          card_id?: number;
+          block_type?: string;
+          content?: string;
+          order_number?: number;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
@@ -383,3 +434,6 @@ export type TiebreakerAnswer = 'A' | 'B';
 export type LandingContentRow = Database['public']['Tables']['landing_content']['Row'];
 export type LandingContentInsert = Database['public']['Tables']['landing_content']['Insert'];
 export type LandingContentUpdate = Database['public']['Tables']['landing_content']['Update'];
+
+export type ResultPageCardRow = Database['public']['Tables']['result_page_cards']['Row'];
+export type ResultPageCardBlockRow = Database['public']['Tables']['result_page_card_blocks']['Row'];
