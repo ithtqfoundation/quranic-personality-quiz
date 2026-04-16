@@ -1,6 +1,8 @@
+// Admin API Route: Result Page Cards CRUD
 import { createAdminClient } from '@/lib/supabase/admin';
 import { verifyAdmin, adminUnauthorizedResponse } from '@/lib/admin-guard';
 import { NextResponse } from 'next/server';
+import type { ResultPageCardUpdate } from '@/types/database';
 
 // GET — semua cards dengan blocks, diurutkan by order_number
 export async function GET() {
@@ -103,7 +105,7 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'id is required' }, { status: 400 });
     }
 
-    const updateData: any = { updated_at: new Date().toISOString() };
+    const updateData: ResultPageCardUpdate = { updated_at: new Date().toISOString() };
     if (cardFields.title !== undefined) updateData.title = cardFields.title;
     if (cardFields.card_type !== undefined) updateData.card_type = cardFields.card_type;
     if (cardFields.order_number !== undefined) updateData.order_number = cardFields.order_number;
