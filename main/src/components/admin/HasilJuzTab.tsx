@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { Plus, Trash2, Save, GripVertical, X, Image as ImageIcon, Type, Heading } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from '@/components/admin/ImageUploader';
+import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog';
+import { ADMIN_API_ROUTES } from '@/lib/constants';
 import type { ResultPageCard, ResultPageCardType, ResultPageBlockType, ResultPageCardBlock } from '@/types/result-page';
 
 const CARD_TYPE_LABELS: Record<ResultPageCardType, string> = {
@@ -126,7 +128,7 @@ function CardModal({
   useEffect(() => {
     if (open) {
       setTitle(initial?.title || '');
-      setCardType((initial?.card_type as ResultPageCardType) || 'custom');
+      setCardType(initial?.card_type ?? 'custom');
       setBlocks(
         (initial?.blocks || []).map((b) => ({
           localId: crypto.randomUUID(),
@@ -212,7 +214,8 @@ export function HasilJuzTab() {
   const [orderDirty, setOrderDirty] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<ResultPageCard | null>(null);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   // Drag state
   const dragIdx = useRef<number | null>(null);
@@ -220,7 +223,7 @@ export function HasilJuzTab() {
   const fetchCards = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/result-page/cards', { credentials: 'include' });
+      const res = await fetch(ADMIN_API_ROUTES.RESULT_PAGE_CARDS, { credentials: 'include' });
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
       setCards(data.cards || []);
@@ -245,7 +248,7 @@ export function HasilJuzTab() {
           : [],
       };
 
-      const url = '/api/admin/result-page/cards';
+      const url = ADMIN_API_ROUTES.RESULT_PAGE_CARDS;
       const method = editingCard ? 'PUT' : 'POST';
       const body = editingCard ? { id: editingCard.id, ...payload } : payload;
 
@@ -265,8 +268,9 @@ export function HasilJuzTab() {
       setModalOpen(false);
       setEditingCard(null);
       fetchCards();
-    } catch (e: any) {
-      toast.error(e.message || 'Gagal menyimpan');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Gagal menyimpan';
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
@@ -274,7 +278,7 @@ export function HasilJuzTab() {
 
   const handleToggleActive = async (card: ResultPageCard) => {
     try {
-      const res = await fetch('/api/admin/result-page/cards', {
+      const res = await fetch(ADMIN_API_ROUTES.RESULT_PAGE_CARDS, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: card.id, is_active: !card.is_active }),
@@ -288,13 +292,15 @@ export function HasilJuzTab() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async () => {
+    if (!deletingId) return;
     setSaving(true);
     try {
-      const res = await fetch(`/api/admin/result-page/cards?id=${id}`, { method: 'DELETE', credentials: 'include' });
+      const res = await fetch(`${ADMIN_API_ROUTES.RESULT_PAGE_CARDS}?id=${deletingId}`, { method: 'DELETE', credentials: 'include' });
       if (!res.ok) throw new Error('Failed');
       toast.success('Card dihapus');
-      setDeleteId(null);
+      setDeleteOpen(false);
+      setDeletingId(null);
       fetchCards();
     } catch {
       toast.error('Gagal menghapus');
@@ -307,7 +313,7 @@ export function HasilJuzTab() {
     setSaving(true);
     try {
       const payload = cards.map((c, i) => ({ id: c.id, order_number: i + 1 }));
-      const res = await fetch('/api/admin/result-page/reorder', {
+      const res = await fetch(ADMIN_API_ROUTES.RESULT_PAGE_REORDER, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cards: payload }),
@@ -409,20 +415,9 @@ export function HasilJuzTab() {
                 ✏
               </button>
               {/* Delete */}
-              {deleteId === card.id ? (
-                <>
-                  <button onClick={() => handleDelete(card.id)} disabled={saving} className="px-2 py-1 text-[10px] rounded bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 disabled:opacity-50">
-                    {saving ? '...' : 'Hapus?'}
-                  </button>
-                  <button onClick={() => setDeleteId(null)} className="px-2 py-1 text-[10px] rounded bg-white/5 text-gray-400 hover:bg-white/10">
-                    Batal
-                  </button>
-                </>
-              ) : (
-                <button onClick={() => setDeleteId(card.id)} className="p-1.5 rounded text-gray-400 hover:text-red-400 hover:bg-red-500/10">
-                  <Trash2 size={14} />
-                </button>
-              )}
+              <button onClick={() => { setDeletingId(card.id); setDeleteOpen(true); }} className="p-1.5 rounded text-gray-400 hover:text-red-400 hover:bg-red-500/10">
+                <Trash2 size={14} />
+              </button>
             </div>
           </div>
         ))}
@@ -441,6 +436,12 @@ export function HasilJuzTab() {
         onSave={handleSave}
         initial={editingCard}
         saving={saving}
+      />
+      <DeleteConfirmDialog
+        open={deleteOpen}
+        onClose={() => { setDeleteOpen(false); setDeletingId(null); }}
+        onConfirm={handleDelete}
+        loading={saving}
       />
     </div>
   );

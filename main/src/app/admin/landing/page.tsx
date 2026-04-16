@@ -203,6 +203,7 @@ export default function LandingPage() {
   }, []);
 
   const saveSection = async (section: Tab) => {
+    if (section === 'hasil_juz') return;
     setSaving(true);
     try {
       const sectionData = content[section] || {};
