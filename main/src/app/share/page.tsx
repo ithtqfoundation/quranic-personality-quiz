@@ -66,7 +66,7 @@ export default function SharePage() {
 
   return (
     <div className="px-4">
-      <HasilJuz result={immediateResult} />
+      <HasilJuz result={immediateResult} cards={[]} />
     </div>
   );
 }
