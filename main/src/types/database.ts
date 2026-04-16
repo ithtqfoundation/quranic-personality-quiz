@@ -295,6 +295,38 @@ export interface Database {
           answered_at?: string;
         };
       };
+      landing_content: {
+        Row: {
+          id: number;
+          section: string;
+          key: string;
+          content_type: string;
+          value: string | null;
+          order_number: number;
+          is_active: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          section: string;
+          key: string;
+          content_type?: string;
+          value?: string | null;
+          order_number?: number;
+          is_active?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          section?: string;
+          key?: string;
+          content_type?: string;
+          value?: string | null;
+          order_number?: number;
+          is_active?: boolean;
+          updated_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
@@ -347,3 +379,7 @@ export type BranchCode = 'EHNH' | 'EHNL' | 'ELNH' | 'ELNL';
 export type EgoLevel = 'HIGH' | 'LOW';
 export type NeuroLevel = 'HIGH' | 'LOW';
 export type TiebreakerAnswer = 'A' | 'B';
+
+export type LandingContentRow = Database['public']['Tables']['landing_content']['Row'];
+export type LandingContentInsert = Database['public']['Tables']['landing_content']['Insert'];
+export type LandingContentUpdate = Database['public']['Tables']['landing_content']['Update'];

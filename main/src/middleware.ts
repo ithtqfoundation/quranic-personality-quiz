@@ -31,14 +31,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/test/1", request.url));
   }
 
-  // Protected routes that require authentication (only /test and /result)
-  const protectedPaths = ["/test", "/result"];
+  // Protected routes that require authentication
+  const protectedPaths = ["/test", "/result", "/admin"];
+  const publicAdminPaths = ["/admin/login"];
+  const isPublicAdminPath = publicAdminPaths.some((path) =>
+    request.nextUrl.pathname.startsWith(path),
+  );
   const isProtectedPath = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path),
   );
 
-  // Redirect to auth login if accessing protected route without auth
-  if (isProtectedPath && !user) {
+  // Redirect to admin login if accessing admin routes without auth
+  if (isProtectedPath && !user && !isPublicAdminPath) {
+    // Admin routes redirect to admin login, other routes redirect to /
+    if (request.nextUrl.pathname.startsWith("/admin")) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -52,7 +60,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/test/1", request.url));
   }
 
-  return NextResponse.next();
+  // Pass pathname to server components via headers
+  const response = NextResponse.next();
+  response.headers.set('x-pathname', request.nextUrl.pathname);
+  return response;
 }
 
 export const config = {

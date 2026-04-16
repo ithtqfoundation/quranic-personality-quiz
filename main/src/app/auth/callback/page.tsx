@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 function CallbackContent() {
   const router = useRouter();
@@ -9,17 +9,17 @@ function CallbackContent() {
 
   useEffect(() => {
     // Get the code from URL
-    const code = searchParams.get('code');
-    const next = searchParams.get('next') || '/register';
+    const code = searchParams.get("code");
+    const next = searchParams.get("next") || "/register";
 
     if (code) {
       // Forward to API route for proper handling
-      console.log('🔄 Forwarding to /api/auth/callback with code:', code);
+      console.log("🔄 Forwarding to /api/auth/callback with code:", code);
       window.location.href = `/api/auth/callback?code=${code}&next=${next}`;
     } else {
       // No code, redirect to login with error
-      console.error('❌ No code found in callback URL');
-      router.push('/auth/login?error=no_code');
+      console.error("❌ No code found in callback URL");
+      router.push("/auth/login?error=no_code");
     }
   }, [searchParams, router]);
 

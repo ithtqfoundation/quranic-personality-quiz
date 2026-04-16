@@ -30,6 +30,17 @@ export const API_ROUTES = {
   HEALTH: '/api/health',
 } as const;
 
+export const ADMIN_API_ROUTES = {
+  STATS: '/api/admin/stats',
+  QUESTIONS: '/api/admin/questions',
+  PERSONALITY: '/api/admin/personality',
+  TIEBREAKER: '/api/admin/tiebreaker',
+  USERS: '/api/admin/users',
+  RESULTS: '/api/admin/results',
+  LANDING: '/api/admin/landing',
+  LANDING_UPLOAD: '/api/admin/landing/upload',
+} as const;
+
 // ============================================
 // QUIZ CONFIGURATION
 // ============================================
