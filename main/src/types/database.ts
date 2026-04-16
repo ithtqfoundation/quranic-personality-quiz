@@ -436,4 +436,8 @@ export type LandingContentInsert = Database['public']['Tables']['landing_content
 export type LandingContentUpdate = Database['public']['Tables']['landing_content']['Update'];
 
 export type ResultPageCardRow = Database['public']['Tables']['result_page_cards']['Row'];
+export type ResultPageCardInsert = Database['public']['Tables']['result_page_cards']['Insert'];
+export type ResultPageCardUpdate = Database['public']['Tables']['result_page_cards']['Update'];
 export type ResultPageCardBlockRow = Database['public']['Tables']['result_page_card_blocks']['Row'];
+export type ResultPageCardBlockInsert = Database['public']['Tables']['result_page_card_blocks']['Insert'];
+export type ResultPageCardBlockUpdate = Database['public']['Tables']['result_page_card_blocks']['Update'];

@@ -39,6 +39,8 @@ export const ADMIN_API_ROUTES = {
   RESULTS: '/api/admin/results',
   LANDING: '/api/admin/landing',
   LANDING_UPLOAD: '/api/admin/landing/upload',
+  RESULT_PAGE_CARDS: '/api/admin/result-page/cards',
+  RESULT_PAGE_REORDER: '/api/admin/result-page/reorder',
 } as const;
 
 export const RESULT_PAGE_API_ROUTES = {
