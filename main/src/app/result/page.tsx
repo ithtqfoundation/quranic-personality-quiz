@@ -9,10 +9,12 @@ import Footer from "@/components/landing-page/Footer";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import type { ResultPageCard } from '@/types/result-page';
 export default function Result() {
   const [result, setResult] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resultCards, setResultCards] = useState<ResultPageCard[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -127,6 +129,14 @@ export default function Result() {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    fetch('/api/result-page/cards')
+      .then((r) => r.json())
+      .then((data) => setResultCards(data.cards || []))
+      .catch(() => setResultCards([]));
+  }, []);
+
   return (
     <>
       <div className="lg:mx-21 md:mx-10 mx-5">
@@ -140,7 +150,7 @@ export default function Result() {
         {error && <p className="text-red-500">Error: {error}</p>}
         {!loading && !result && <p>Hasil tidak ditemukan</p>}
 
-        {result && <HasilJuz result={result} />}
+        {result && <HasilJuz result={result} cards={resultCards} />}
         <div className="flex flex-row md:justify-end justify-center items-center gap-5 my-8">
           <RestartTest />
           <ShareButton />
