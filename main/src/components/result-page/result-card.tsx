@@ -9,7 +9,7 @@ export function ResultCard({ card }: ResultCardProps) {
   if (!card.blocks || card.blocks.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-4 py-4">
+    <div className="flex flex-col gap-4 py-2">
       {card.blocks.map((block) => {
         if (block.block_type === 'heading') {
           return (

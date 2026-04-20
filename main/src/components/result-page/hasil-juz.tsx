@@ -8,7 +8,7 @@ import type { ResultPageCard } from '@/types/result-page';
 function PersonalityDescription({ description }: { description: string }) {
   return (
     <div className="pt-9.25">
-      <div className="lg:text-[18px] text-[14px] flex flex-col gap-4 items-start">
+      <div className="lg:text-[18px] text-[14px] flex flex-col gap-4 items-start py-2">
         <p className="lg:text-[22px] text-[16px] text-[#006557] font-bold pb-2 border-b border-neutral-200 w-full">
           Gambaran Umum
         </p>
@@ -114,14 +114,14 @@ export default function HasilJuz({ result, cards }: HasilJuzProps) {
       const nextIsChallenge = nextActiveCard?.card_type === 'personality_challenges';
       if (nextIsChallenge) {
         return (
-          <div key={card.id} className="flex lg:flex-row flex-col items-stretch justify-center gap-[25px]">
+          <div key={card.id} className="flex lg:flex-row flex-col items-stretch justify-center gap-[25px] py-2">
             <PersonalityStrengths strengths={strengths} />
             <PersonalityChallenges challenges={challenges} />
           </div>
         );
       }
       return (
-        <div key={card.id} className="flex lg:flex-row flex-col items-stretch justify-center gap-[25px]">
+        <div key={card.id} className="flex lg:flex-row flex-col items-stretch justify-center gap-[25px] py-2">
           <PersonalityStrengths strengths={strengths} />
         </div>
       );
@@ -132,7 +132,7 @@ export default function HasilJuz({ result, cards }: HasilJuzProps) {
       const prevActiveCard = [...activeCards].slice(0, idx).reverse().find((c) => c.is_active);
       if (prevActiveCard?.card_type === 'personality_strengths') return null;
       return (
-        <div key={card.id} className="flex lg:flex-row flex-col items-stretch justify-center gap-[25px]">
+        <div key={card.id} className="flex lg:flex-row flex-col items-stretch justify-center gap-[25px] py-2">
           <PersonalityChallenges challenges={challenges} />
         </div>
       );

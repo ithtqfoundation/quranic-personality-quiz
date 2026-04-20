@@ -133,27 +133,52 @@ export async function POST(request: Request) {
     console.log('[DEBUG] User email from auth:', user.email);
 
     // First check if row exists
-    const { data: existingUser } = await supabase
+    const { data: users } = await supabase
       .from('users')
       .select('id, email')
-      .eq('id', user.id)
-      .single();
-
+      .eq('id', user.id);
+    
+    const existingUser = users?.[0];
     console.log('[DEBUG] Existing user in DB:', existingUser);
 
-    // Use UPDATE instead of UPSERT to avoid INSERT policy conflict
-    const { data: userData, error: upsertError } = await supabase
-      .from('users')
-      .update({
-        name,
-        gender,
-        date_of_birth,
-        photo_url,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', user.id)
-      .select()
-      .single();
+    // Use INSERT if user doesn't exist, otherwise UPDATE
+    let userData = null;
+    let upsertError = null;
+
+    if (!existingUser) {
+      console.log('[INFO] User does not exist, inserting new profile...');
+      const { data: insertedData, error: insertErr } = await supabase
+        .from('users')
+        .insert({
+          id: user.id,
+          email: user.email,
+          name,
+          gender,
+          date_of_birth,
+          photo_url,
+          updated_at: new Date().toISOString(),
+        })
+        .select();
+      
+      userData = insertedData?.[0];
+      upsertError = insertErr;
+    } else {
+      console.log('[INFO] User exists, updating profile...');
+      const { data: updatedData, error: updateErr } = await supabase
+        .from('users')
+        .update({
+          name,
+          gender,
+          date_of_birth,
+          photo_url,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id)
+        .select();
+      
+      userData = updatedData?.[0];
+      upsertError = updateErr;
+    }
 
     if (upsertError) {
       console.error('[ERROR] Database error:', upsertError);
