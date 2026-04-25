@@ -16,6 +16,8 @@ async function getLandingContent() {
 
     if (!res.ok) return {};
     const data = await res.json();
+    console.log('Base URL:', baseUrl);
+    console.log('Landing content:', data);
     return data.content || {};
   } catch {
     return {};
