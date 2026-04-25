@@ -2,6 +2,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { verifyAdmin, adminUnauthorizedResponse } from '@/lib/admin-guard';
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 // GET — Public (no auth needed) — used by landing page to fetch content
 export async function GET(request: Request) {
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    revalidateTag('landing-content', { expire: 0 });
     return NextResponse.json({ content: data }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -116,6 +118,7 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    revalidateTag('landing-content', { expire: 0 });
     return NextResponse.json({ content: data, message: `${section} section updated` });
   } catch (error: any) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
