@@ -11,7 +11,7 @@ async function getLandingContent() {
       || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
     const res = await fetch(`${baseUrl}/api/admin/landing`, {
-      next: { revalidate: 60, tags: ['landing-content'] },
+      next: { revalidate: 0, tags: ['landing-content'] },
     });
 
     if (!res.ok) return {};
