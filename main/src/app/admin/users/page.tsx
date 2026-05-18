@@ -28,7 +28,9 @@ export default function UsersPage() {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/users', { credentials: 'include' });
+      const res = await fetch('/api/admin/users?limit=1000', {
+  credentials: 'include'
+});
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
       setUsers(data.users || []);
