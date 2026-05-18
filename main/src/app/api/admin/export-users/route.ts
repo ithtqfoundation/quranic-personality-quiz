@@ -13,36 +13,51 @@ export async function GET() {
 
     const { data: users, error } = await supabase
       .from('users')
-      .select('*')
+      .select(`
+  *,
+  quiz_results (
+    final_juz,
+    completed_at
+  )
+`)
       .order('created_at', { ascending: false });
 
     if (error) {
       throw error;
     }
 
-    const csvRows = [
-      [
-        'Name',
-        'Email',
-        'Age',
-        'Whatsapp',
-        'Photo URL',
-        'Created At'
-      ].join(',')
-    ];
+    const headers = [
+  'Name',
+  'Email',
+  'Age',
+  'Whatsapp',
+  'Final Juz',
+  'Quiz Count',
+  'Photo URL',
+  'Created At',
+];
 
-    (users || []).forEach((u) => {
-      csvRows.push([
-        `"${u.name || ''}"`,
-        `"${u.email || ''}"`,
-        `"${u.age || ''}"`,
-        `"${u.whatsapp || ''}"`,
-        `"${u.photo_url || ''}"`,
-        `"${u.created_at || ''}"`
-      ].join(','));
-    });
+const rows = (users || []).map((u: any) => {
+  const latestQuiz =
+    u.quiz_results?.sort(
+      (a: any, b: any) =>
+        new Date(b.completed_at).getTime() -
+        new Date(a.completed_at).getTime()
+    )[0];
 
-    const csv = csvRows.join('\n');
+  return [
+    `"${u.name || ''}"`,
+    `"${u.email || ''}"`,
+    `"${u.age || ''}"`,
+    `"${u.whatsapp || ''}"`,
+    `"${latestQuiz?.final_juz || ''}"`,
+    `"${u.quiz_results?.length || 0}"`,
+    `"${u.photo_url || ''}"`,
+    `"${u.created_at || ''}"`,
+  ].join(',');
+});
+
+const csv = [headers.join(','), ...rows].join('\n');
 
     return new Response(csv, {
       headers: {
