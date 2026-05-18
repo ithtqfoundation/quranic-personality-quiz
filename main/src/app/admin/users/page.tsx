@@ -137,8 +137,20 @@ export default function UsersPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <DataTable
+  <div className="space-y-6">
+
+    <div className="flex justify-end">
+      <a
+        href="/api/admin/export-users"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 transition"
+      >
+        Export CSV
+      </a>
+    </div>
+
+    <DataTable
         columns={columns}
         data={users}
         searchKeys={['name', 'email']}
