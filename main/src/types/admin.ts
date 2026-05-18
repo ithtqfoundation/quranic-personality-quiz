@@ -141,6 +141,7 @@ export interface RecentQuizActivity {
   id: string;
   userName: string;
   userEmail: string;
+  photo_url?: string;
   finalJuz: number | null;
   personalityName: string | null;
   branchCategory: string | null;

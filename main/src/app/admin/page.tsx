@@ -88,12 +88,30 @@ export default function AdminDashboard() {
               <p className="px-5 py-8 text-center text-sm text-gray-500">No recent activity</p>
             ) : (
               recent.map((item) => (
-                <div key={item.id} className="flex items-center justify-between px-5 py-3 hover:bg-white/[0.02]">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{item.userName}</p>
-                    <p className="text-[11px] text-gray-500 truncate">{item.userEmail}</p>
-                  </div>
-                  <div className="text-right ml-4 shrink-0">
+                <div className="flex items-center justify-between px-5 py-3 hover:bg-white/[0.02]">
+
+  <div className="flex items-center gap-4">
+
+    {item.photo_url && (
+      <img
+        src={item.photo_url}
+        alt={item.userName}
+        className="w-12 h-12 rounded-full object-cover border border-white/10"
+      />
+    )}
+
+    <div className="min-w-0">
+      <p className="text-sm font-medium text-white truncate">
+        {item.userName}
+      </p>
+      <p className="text-[11px] text-gray-500 truncate">
+        {item.userEmail}
+      </p>
+    </div>
+
+  </div>
+
+  <div className="text-right ml-4 shrink-0">
                     <p className="text-sm text-emerald-400 font-medium">
                       {item.finalJuz ? `Juz ${item.finalJuz}` : '—'}
                     </p>

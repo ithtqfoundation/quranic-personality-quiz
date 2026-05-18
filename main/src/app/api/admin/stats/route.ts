@@ -62,7 +62,7 @@ export async function GET() {
       const userIds = [...new Set(recentRes.data.map((r) => r.user_id).filter(Boolean))];
       const { data: users } = await supabase
         .from('users')
-        .select('id, name, email')
+        .select('id, name, email, photo_url')
         .in('id', userIds);
 
       const userMap = new Map((users || []).map((u) => [u.id, u]));
@@ -73,6 +73,7 @@ export async function GET() {
           id: r.id,
           userName: user?.name || 'Anonymous',
           userEmail: user?.email || '—',
+          photo_url: user?.photo_url || '',
           finalJuz: r.final_juz,
           branchCategory: r.branch_category,
           hadTie: r.had_tie,
