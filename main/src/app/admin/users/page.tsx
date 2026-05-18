@@ -68,7 +68,20 @@ export default function UsersPage() {
       className: 'w-12',
       render: (r) =>
         r.photo_url ? (
-          <Image src={r.photo_url} alt="" width={32} height={32} className="w-8 h-8 rounded-full object-cover" unoptimized />
+           <a
+    href={r.photo_url}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Image
+      src={r.photo_url}
+      alt=""
+      width={32}
+      height={32}
+      className="w-8 h-8 rounded-full object-cover hover:scale-110 transition"
+      unoptimized
+    />
+  </a>
         ) : (
           <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-xs font-bold text-emerald-400">
             {r.name?.charAt(0)?.toUpperCase() || '?'}
