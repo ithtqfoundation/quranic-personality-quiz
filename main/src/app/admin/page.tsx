@@ -93,12 +93,18 @@ export default function AdminDashboard() {
   <div className="flex items-center gap-4">
 
     {item.photo_url && (
-      <img
-        src={item.photo_url}
-        alt={item.userName}
-        className="w-12 h-12 rounded-full object-cover border border-white/10"
-      />
-    )}
+       <a
+    href={item.photo_url}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <img
+      src={item.photo_url}
+      alt={item.userName}
+      className="w-12 h-12 rounded-full object-cover border border-white/10 hover:scale-110 transition"
+    />
+  </a>
+)}
 
     <div className="min-w-0">
       <p className="text-sm font-medium text-white truncate">
